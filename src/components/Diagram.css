@@ -1,0 +1,28 @@
+.diagram-container {
+  text-align: left;
+  color: #1a1a1a;
+  background: transparent;
+}
+
+.diagram-container h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.diagram-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.diagram-container li {
+  margin: 0.6rem 0;
+  font-size: 1.1rem;
+  padding-left: 0.5rem;
+  position: relative;
+}
+
+.diagram-container li::before {
+  content: "✔️";
+  position: absolute;
+  left: -1.2rem;
+}
