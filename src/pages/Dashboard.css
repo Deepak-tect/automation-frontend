@@ -215,6 +215,11 @@ body, html {
 .circle.done {
   background-color: #28a745;
 }
+.circle.error {
+  background-color: #dc3545; /* red */
+  color: white;
+  animation: none;
+}
 
 .circle.active {
   background-color: #ffc107;

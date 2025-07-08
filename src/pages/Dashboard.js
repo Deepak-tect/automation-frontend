@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
-import { useEffect } from 'react';
+import { useEffect,useRef } from 'react';
 import socket from '../socket'; 
 import { getAuth, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import StatusTracker from './StatusTracker';
+import StatusTracker from '../pages/StatusTracker';
 
 const Dashboard = () => {
   const [activeMenu, setActiveMenu] = useState('deploy');
   const [activeTab, setActiveTab] = useState('deploy');
   const [currentStage, setCurrentStage] = useState(0);
   const [statusMessages, setStatusMessages] = useState([]);
-
+  const [errorStage, setErrorStage] = useState([]);
+  const currentStageRef = useRef(currentStage);
+  const errorStageRef = useRef(errorStage);
+ 
   const [formData, setFormData] = useState({
     customerName: '',
     nodes: '',
@@ -27,18 +30,55 @@ const Dashboard = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  
+
+  // Update refs whenever state changes
   useEffect(() => {
-  socket.on('deployment-update', (data) => {
-    console.log('Deployment Update:', data);
+    currentStageRef.current = currentStage;
+  }, [currentStage]);
 
-    setCurrentStage(data.stage);
-    setStatusMessages((prev) => [...prev, data.message]);
-  });
+  useEffect(() => {
+    errorStageRef.current = errorStage;
+  }, [errorStage]);
 
-  return () => {
-    socket.off('deployment-update');
-  };
-}, []);
+  useEffect(() => {
+    socket.on('deployment-update', (data) => {
+      console.log('Deployment Update:', data);
+      console.log('current Update:', currentStageRef.current);
+
+      if (data.error === true) {
+        setErrorStage(currentStageRef.current);
+        console.log('errorStage', errorStageRef.current);
+      } else {
+        setErrorStage(null); // reset if recovery
+      }
+      setCurrentStage(data.stage);
+      setStatusMessages((prev) => [...prev, data.message]);
+    });
+
+    return () => {
+      socket.off('deployment-update');
+    };
+  }, []);
+
+//   useEffect(() => {
+//   socket.on('deployment-update', (data) => {
+//     console.log('Deployment Update:', data);
+//     console.log('current Update:', currentStage);
+//     if (data.error == true) {
+//       setErrorStage(data.stage);
+//       console.log('errorStage',data.stage)
+//     } else {
+//       setErrorStage(null); // reset if recovery
+//     }
+//     setCurrentStage(data.stage);
+//     setStatusMessages((prev) => [...prev, data.message]);
+//   });
+  
+//   return () => {
+//     socket.off('deployment-update');
+//   };
+// }, []);
 
 
   const handleSubmit = async (e) => {
@@ -155,7 +195,7 @@ const Dashboard = () => {
           {activeTab === 'status' && (
             <div className="status">
               <h2>Deployment Status</h2>
-              <StatusTracker currentStage={currentStage} messages={statusMessages} />
+              <StatusTracker currentStage={currentStage} errorStage={errorStage} />
             </div>
           )}
         </div>
