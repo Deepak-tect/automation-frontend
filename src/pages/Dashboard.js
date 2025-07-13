@@ -50,7 +50,7 @@ const Dashboard = () => {
         setErrorStage(currentStageRef.current);
         console.log('errorStage', errorStageRef.current);
       } else {
-        setErrorStage(null); // reset if recovery
+        setErrorStage(null); 
       }
       setCurrentStage(data.stage);
       setStatusMessages((prev) => [...prev, data.message]);
