@@ -1,13 +1,49 @@
-# Build stage
+# frontend/Dockerfile
+
 FROM node:18-alpine AS builder
 WORKDIR /app
+
+# Build args for Firebase envs
+ARG REACT_APP_FIREBASE_API_KEY
+ARG REACT_APP_FIREBASE_AUTH_DOMAIN
+ARG REACT_APP_FIREBASE_PROJECT_ID
+ARG REACT_APP_FIREBASE_STORAGE_BUCKET
+ARG REACT_APP_FIREBASE_MESSAGING_SENDER_ID
+ARG REACT_APP_FIREBASE_APP_ID
+ARG REACT_APP_FIREBASE_MEASUREMENT_ID
+
+# Set as ENV so React can read them
+ENV REACT_APP_FIREBASE_API_KEY=$REACT_APP_FIREBASE_API_KEY
+ENV REACT_APP_FIREBASE_AUTH_DOMAIN=$REACT_APP_FIREBASE_AUTH_DOMAIN
+ENV REACT_APP_FIREBASE_PROJECT_ID=$REACT_APP_FIREBASE_PROJECT_ID
+ENV REACT_APP_FIREBASE_STORAGE_BUCKET=$REACT_APP_FIREBASE_STORAGE_BUCKET
+ENV REACT_APP_FIREBASE_MESSAGING_SENDER_ID=$REACT_APP_FIREBASE_MESSAGING_SENDER_ID
+ENV REACT_APP_FIREBASE_APP_ID=$REACT_APP_FIREBASE_APP_ID
+ENV REACT_APP_FIREBASE_MEASUREMENT_ID=$REACT_APP_FIREBASE_MEASUREMENT_ID
+
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-# Serve stage
 FROM nginx:alpine
 COPY --from=builder /app/build /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
+
+
+
+
+# # Build stage
+# FROM node:18-alpine AS builder
+# WORKDIR /app
+# COPY package*.json ./
+# RUN npm install
+# COPY . .
+# RUN npm run build
+
+# # Serve stage
+# FROM nginx:alpine
+# COPY --from=builder /app/build /usr/share/nginx/html
+# EXPOSE 80
+# CMD ["nginx", "-g", "daemon off;"]
