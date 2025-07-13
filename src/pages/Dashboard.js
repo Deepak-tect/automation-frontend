@@ -92,7 +92,7 @@ const Dashboard = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:4000/api/deploy', {
+      const response = await fetch('/api/deploy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

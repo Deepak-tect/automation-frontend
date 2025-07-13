@@ -16,7 +16,7 @@ const Login = () => {
 
 
     try {
-      const response = await fetch('http://localhost:4000/api/auth', {
+      const response = await fetch('/api/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const Login = () => {
 
     const idToken = await user.getIdToken();
 
-    const response = await fetch('http://localhost:4000/api/google-auth', {
+    const response = await fetch('/api/google-auth', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
